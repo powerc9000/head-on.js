@@ -133,6 +133,7 @@
                 }, 100);
             },
             onTick: function(then){
+            	
                 var now = Date.now(),
                 modifier = now - then;
                 this.update(modifier);
@@ -149,11 +150,12 @@
             },
             run: function(){
                 var that = this;
-                setInterval(function(){
-                    var then = Date.now();
+                var then = Date.now();
+                setInterval(function(){    
                     if(that.imagesLoaded){
                         that.onTick(then);
                     }
+                    then = Date.now();
                 }, 1000/20);
             }
 
