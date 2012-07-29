@@ -11,8 +11,10 @@
             
             drawRect: function(width,height,x,y,color){
                 this.ctx.save();
-                this.ctx.fillStyle = color;
-                this.ctx.fillRect(width,height,x,y);
+                if(color){
+                	this.ctx.fillStyle = color;
+                }
+                this.ctx.fillRect(x,y,width,height);
                 this.ctx.restore();
             },
             drawImage: function(image,x,y){
