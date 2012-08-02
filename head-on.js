@@ -8,6 +8,10 @@
             fps: 50,
             imagesLoaded: false,
             gameTime: 0,
+
+            randInt: function(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            },
             
             drawRect: function(width,height,x,y,color){
                 this.ctx.save();
@@ -101,8 +105,8 @@
                     }
                 }
                 else{
+                	this.groups[groupName] = [];
                     if(entity){
-                        this.groups[groupName] = [];
                         this.groups[groupName].push(entity);
                     }
                 }
@@ -157,8 +161,7 @@
                     }
                     then = Date.now();
                 }, 1000/20);
-            }
-
+            },
         };
         
         return headOn;
