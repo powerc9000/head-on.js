@@ -17,8 +17,9 @@
                 add: function(eventName, callback){
                     this.events[eventName] = callback;
                 },
-                trigger: function(eventName, data){
-                    this.events[eventName](data);
+                trigger: function(eventName){
+                    var args = [].splice.call(arguments, 1)
+                    this.events[eventName].apply(null,args);
                 }
             },
             drawRect: function(width,height,x,y,color){
@@ -39,25 +40,41 @@
                 this.ctx.rotate(radians);
                 this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
                 this.ctx.restore();
-            },  
+            },
+            drawText: function(textString, x, y, fontStyle, color, alignment){
+                this.ctx.save();
+
+                if(fontStyle){
+                    this.ctx.font = fontStyle + " sans-serif";
+                }
+                if(color){
+                    this.ctx.fillStyle = color;
+                }
+                if(alignment){
+                    this.ctx.textAlign = alignment;
+                }
+
+                this.ctx.fillText(textString,x,y);
+
+                this.ctx.restore();
+            },
             animate: function(object,keyFrames,callback){
-                var that, interval;
+                var that, interval, currentFrame = 0;
                 if(!object.animating){
                     object.animating = true;
-                    object.currentAnimation = keyFrames;
-                    object.animationFrame = 0;
                     object.image = keyFrames[0];
                     that = this;
-                    object.interval = setInterval(function(){
-                        if(object.currentAnimation.length === object.animationFrame){
+
+                    interval = setInterval(function(){
+                        if(keyFrames.length === currentFrame){
                             callback();
                             object.animating = false;
-                            object.image ="";
-                            clearInterval(object.interval);
+                            object.image = "";
+                            clearInterval(interval);
                         }
                         else{
-                            object.animationFrame += 1;
-                            object.image = object.currentAnimation[object.animationFrame];
+                            currentFrame += 1;
+                            object.image = keyFrames[currentFrame];
                         }
                     },1000/this.fps);
                 }
