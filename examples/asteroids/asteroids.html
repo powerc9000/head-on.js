@@ -3,22 +3,21 @@
 	<title></title>
 </head>
 <body>
-
 </body>
 <script src="../../head-on.js"></script>
 <script>
 	var keysDown = {}, reset;
 
 	addEventListener("keydown", function (e) {
-    	keysDown[e.keyCode] = true;
-    }, false);
+		keysDown[e.keyCode] = true;
+	}, false);
 
-   	addEventListener("keyup", function (e) {
-    	keysDown[e.keyCode] = false;
-   	}, false);
+	addEventListener("keyup", function (e) {
+		keysDown[e.keyCode] = false;
+	}, false);
 
-   	var randInt = function(min, max) {
-    	return Math.floor(Math.random() * (max - min + 1)) + min;
+	var randInt = function(min, max) {
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	headOn.canvas(500,500);
@@ -66,8 +65,13 @@
 		{name:"ship",src:"img/ship.png"},
 		{name:"asteroid_large",src:"img/asteroid_large.png"},
 		{name:"asteroid_medium",src:"img/asteroid_medium.png"},
-		{name:"asteroid_small",src:"img/asteroid_small.png"}
+		{name:"asteroid_small",src:"img/asteroid_small.png"},
+		{name:"fire", src:"img/fire.gif"}
 	);
+	var fire = []
+	for(i=0;i<5;i+=1){
+		fire.push(headOn.images.fire);
+	}
 	reset = function(){
 		headOn.groups.asteroids = [];
 		headOn.groups.bullets = [];
@@ -110,19 +114,19 @@
 		}
 		var modifier = headOn.fps/1000;
 		if (keysDown[38]) { // Player holding up
-        	ship.vx += Math.sin(ship.angle * (Math.PI/180)) * (ship.speed * modifier)/2;
+			ship.vx += Math.sin(ship.angle * (Math.PI/180)) * (ship.speed * modifier)/2;
 			ship.vy -= Math.cos(ship.angle * (Math.PI/180)) * (ship.speed * modifier)/2;
-      	}
-      	if (keysDown[37]) { // Player holding left
-      	  	ship.angle -= 200 * modifier;
-      	}
-      	if (keysDown[39]) { // Player holding right
-      	  	ship.angle += 200 * modifier;
-      	}
-      	
-      	if(keysDown[32]){
-      		if(ship.canShoot){
-	      		headOn.group("bullets",headOn.entity(
+		}
+		if (keysDown[37]) { // Player holding left
+		  	ship.angle -= 200 * modifier;
+		}
+		if (keysDown[39]) { // Player holding right
+			  	ship.angle += 200 * modifier;
+			}
+			
+			if(keysDown[32]){
+				if(ship.canShoot){
+					headOn.group("bullets",headOn.entity(
 				{
 					x: ship.x + ship.width/2,
 					y: ship.y + ship.height/2,
@@ -137,102 +141,109 @@
 				var timeOut = setTimeout(function(){
 					ship.canShoot = true;
 				},250)
-      		}
-      		
-      	}
-      	ship.x += ship.vx;
-      	ship.y += ship.vy;
-      	if(ship.x > headOn.canvas.width){
-      		ship.x = 0;
-      	}
-      	if(ship.y > headOn.canvas.height){
-      		ship.y = 0;
-      	}
-      	if(ship.x + ship.width < 0){
-      		ship.x = headOn.canvas.width;
-      	}
-      	if(ship.y + ship.height < 0){
-      		ship.y = headOn.canvas.height;
-      	}
+				}
+				
+			}
+			ship.x += ship.vx;
+			ship.y += ship.vy;
+			if(ship.x > headOn.canvas.width){
+				ship.x = 0;
+			}
+			if(ship.y > headOn.canvas.height){
+				ship.y = 0;
+			}
+			if(ship.x + ship.width < 0){
+				ship.x = headOn.canvas.width;
+			}
+			if(ship.y + ship.height < 0){
+				ship.y = headOn.canvas.height;
+			}
 
-      	headOn.groups.asteroids.forEach(function(asteroid){
-      		asteroid.x += asteroid.vx;
-      		asteroid.y += asteroid.vy;
-      		if(asteroid.x > headOn.canvas.width){
-      			asteroid.x = 0;
-      		}
-      		if(asteroid.y > headOn.canvas.height){
-      			asteroid.y = 0;
-      		}
-      		if(asteroid.x + asteroid.width < 0){
-      			asteroid.x = headOn.canvas.width;
-      		}
-      		if(asteroid.y + asteroid.height < 0){
-      			asteroid.y = headOn.canvas.height;
-      		}
-      	});
+			headOn.groups.asteroids.forEach(function(asteroid){
+				if(!asteroid.dead){
+					asteroid.x += asteroid.vx;
+					asteroid.y += asteroid.vy;
+					if(asteroid.x > headOn.canvas.width){
+						asteroid.x = 0;
+					}
+					if(asteroid.y > headOn.canvas.height){
+						asteroid.y = 0;
+					}
+					if(asteroid.x + asteroid.width < 0){
+						asteroid.x = headOn.canvas.width;
+					}
+					if(asteroid.y + asteroid.height < 0){
+						asteroid.y = headOn.canvas.height;
+					}
+				}
+				
+			});
 
-      	headOn.groups.bullets.forEach(function(bullet,index){
-      		if(bullet.lived >= 40){
-      			headOn.groups.bullets.splice(index,1);
-      		}
-      		else{
-      			bullet.lived += 1;
-      		}
-      		bullet.x += bullet.vx;
-      		bullet.y += bullet.vy;
-      		if(bullet.x > headOn.canvas.width){
-      			bullet.x = 0;
-      		}
-      		if(bullet.y > headOn.canvas.height){
-      			bullet.y = 0;
-      		}
-      		if(bullet.x + bullet.width < 0){
-      			bullet.x = headOn.canvas.width;
-      		}
-      		if(bullet.y + bullet.height < 0){
-      			bullet.y = headOn.canvas.height;
-      		}
-      	});
-      	headOn.groups.asteroids.forEach(function(asteroid, ai){
-      		if(headOn.collides(ship,asteroid)){
-      			headOn.stopped = true;
-      			headOn.gameOver = true;
-      			console.log(asteroid);
-      		}
-      		headOn.groups.bullets.forEach(function(bullet, bi){
-      			var i, loops, size, sizeChart = {medium:{width:32,height:32}, small:{width:16,height:16}};
-      			if(headOn.collides(bullet,asteroid)){
-      				if(asteroid.size === "large"){
-      					loops = 2;
-      					size = "medium";
-      				}
-      				if(asteroid.size === "medium"){
-      					loops = 3;
-      					size = "small";
-      				}
-      				if(asteroid.size === "small"){
-      					loops = 0;
-      					size = "none";
-      					
-      				}
-      				for(i=0; i<loops; i+=1){
-      					console.log("llopp");
-      					headOn.group("asteroids", headOn.entity({
-      						size: size,
-      						x: asteroid.x + randInt(-10,10),
-      						y: asteroid.y + randInt(-10,10),
-      						vx: randInt(-2,2) || randInt(-2,2),
-      						vy: randInt(-2,2) || randInt(-2,2),
-      						width: sizeChart[size].width,
-      						height: sizeChart[size].height
-      					}))
-      				}
-      				headOn.groups.asteroids.splice(ai,1);
-      				headOn.groups.bullets.splice(bi,1);
-      			}
-      		});
-      	});
+			headOn.groups.bullets.forEach(function(bullet,index){
+				if(bullet.lived >= 40){
+					headOn.groups.bullets.splice(index,1);
+				}
+				else{
+					bullet.lived += 1;
+				}
+				bullet.x += bullet.vx;
+				bullet.y += bullet.vy;
+				if(bullet.x > headOn.canvas.width){
+					bullet.x = 0;
+				}
+				if(bullet.y > headOn.canvas.height){
+					bullet.y = 0;
+				}
+				if(bullet.x + bullet.width < 0){
+					bullet.x = headOn.canvas.width;
+				}
+				if(bullet.y + bullet.height < 0){
+					bullet.y = headOn.canvas.height;
+				}
+			});
+			headOn.groups.asteroids.forEach(function(asteroid, ai){
+				if(headOn.collides(ship,asteroid)){
+					headOn.stopped = true;
+					headOn.gameOver = true;
+					console.log(asteroid);
+				}
+				headOn.groups.bullets.forEach(function(bullet, bi){
+					var i, loops, size, sizeChart = {medium:{width:32,height:32}, small:{width:16,height:16}};
+					if(headOn.collides(bullet,asteroid)){
+						if(asteroid.size === "large"){
+							loops = 2;
+							size = "medium";
+						}
+						if(asteroid.size === "medium"){
+							loops = 3;
+							size = "small";
+						}
+						if(asteroid.size === "small"){
+							loops = 0;
+							size = "none";
+							
+						}
+						asteroid.dead = true;
+						headOn.animate(asteroid,fire,function(){
+							for(i=0; i<loops; i+=1){
+							console.log("llopp");
+							headOn.group("asteroids", headOn.entity({
+								size: size,
+								x: asteroid.x + randInt(-10,10),
+								y: asteroid.y + randInt(-10,10),
+								vx: randInt(-2,2) || randInt(-2,2),
+								vy: randInt(-2,2) || randInt(-2,2),
+								width: sizeChart[size].width,
+								height: sizeChart[size].height
+							}))
+						}
+						headOn.groups.asteroids.splice(ai,1);
+						
+						});
+						headOn.groups.bullets.splice(bi,1);
+					}
+				});
+			});
 	}
 	headOn.render = function(time){
 		if(headOn.stopped){
@@ -247,14 +258,20 @@
 		headOn.drawRect(500,500,0,0);
 
 		headOn.groups.bullets.forEach(function(bullet){
-      		headOn.drawRect(3,3,bullet.x,bullet.y,"white");
-      	})
+				headOn.drawRect(3,3,bullet.x,bullet.y,"white");
+			})
 
 		headOn.drawImageRotated(headOn.images["ship"], ship.angle, ship.x, ship.y);
 		//render asteroids
 		headOn.groups.asteroids.forEach(function(asteroid){
 			headOn.drawImage(headOn.images["asteroid_"+asteroid.size], asteroid.x, asteroid.y)
-      	});
+			});
+		headOn.groups.asteroids.forEach(function(asteroid){
+			if(asteroid.image){
+				headOn.drawImage(asteroid.image, asteroid.x, asteroid.y)
+			}
+			
+		});
 
 	}
 	headOn.run();

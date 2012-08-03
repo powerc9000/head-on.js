@@ -12,11 +12,19 @@
             randInt: function(min, max) {
                 return Math.floor(Math.random() * (max - min + 1)) + min;
             },
-            
+            events: {
+                events: {},
+                add: function(eventName, callback){
+                    this.events[eventName] = callback;
+                },
+                trigger: function(eventName, data){
+                    this.events[eventName](data);
+                }
+            },
             drawRect: function(width,height,x,y,color){
                 this.ctx.save();
                 if(color){
-                	this.ctx.fillStyle = color;
+                    this.ctx.fillStyle = color;
                 }
                 this.ctx.fillRect(x,y,width,height);
                 this.ctx.restore();
@@ -31,8 +39,8 @@
                 this.ctx.rotate(radians);
                 this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
                 this.ctx.restore();
-            },    
-            animate: function(object,keyFrames){
+            },  
+            animate: function(object,keyFrames,callback){
                 var that, interval;
                 if(!object.animating){
                     object.animating = true;
@@ -41,14 +49,16 @@
                     object.image = keyFrames[0];
                     that = this;
                     object.interval = setInterval(function(){
-                    if(object.currentAnimation.length === object.animationFrame){
-                        clearInterval(object.interval);
-                        object.animating = false;
-                    }
-                    else{
-                        object.animationFrame += 1;
-                        object.image = object.currentAnimation[object.animationFrame];
-                    }
+                        if(object.currentAnimation.length === object.animationFrame){
+                            callback();
+                            object.animating = false;
+                            object.image ="";
+                            clearInterval(object.interval);
+                        }
+                        else{
+                            object.animationFrame += 1;
+                            object.image = object.currentAnimation[object.animationFrame];
+                        }
                     },1000/this.fps);
                 }
                 
@@ -74,30 +84,30 @@
             },
 
             collides: function(ob1,ob2){
-	            var x1, x2, y1, y2, w1, w2, h1, h2;
-	            x1 = ob1.x;
-	            x2 = ob2.x;
-	            y1 = ob1.y;
-	            y2 = ob2.y;
-	            w1 = ob1.width;
-	            w2 = ob2.width;
-	            h1 = ob1.height;
-	            h2 = ob2.height;
-	            w1 += x1;
-	            w2 += x2;
+             var x1, x2, y1, y2, w1, w2, h1, h2;
+             x1 = ob1.x;
+             x2 = ob2.x;
+             y1 = ob1.y;
+             y2 = ob2.y;
+             w1 = ob1.width;
+             w2 = ob2.width;
+             h1 = ob1.height;
+             h2 = ob2.height;
+             w1 += x1;
+             w2 += x2;
 
-	            if(w2 < x1 || w1 < x2){
-	                return false;
-	            }
+             if(w2 < x1 || w1 < x2){
+                return false;
+             }
 
-	            h1 += y1;
-	            h2 += y2;
+             h1 += y1;
+             h2 += y2;
 
-	            if(h2 < y1 || h1 < y2){
-	                return false;
-	            }
-	            return true;
-        	},
+             if(h2 < y1 || h1 < y2){
+                return false;
+             }
+             return true;
+            },
             group: function(groupName, entity){
                 if(this.groups[groupName]){
                     if(entity){
@@ -105,7 +115,7 @@
                     }
                 }
                 else{
-                	this.groups[groupName] = [];
+                    this.groups[groupName] = [];
                     if(entity){
                         this.groups[groupName].push(entity);
                     }
@@ -125,7 +135,7 @@
                     img.onload = function(){
                         loaded += 1;
                     };
-                                   
+                
                     that.images[image.name] = img;
                 });
                 
@@ -137,7 +147,7 @@
                 }, 100);
             },
             onTick: function(then){
-            	
+            
                 var now = Date.now(),
                 modifier = now - then;
                 this.update(modifier);
@@ -155,7 +165,7 @@
             run: function(){
                 var that = this;
                 var then = Date.now();
-                setInterval(function(){    
+                setInterval(function(){ 
                     if(that.imagesLoaded){
                         that.onTick(then);
                     }
