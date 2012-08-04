@@ -78,5 +78,31 @@ Head-on expects and image argument to an argument formated as `{name:"",src:""}`
 
 The images you load via Head-on are accesible from the headOn.images variable to get the image we want we simply do `headOn.images["image name"]` where image name is the name we gave the image when we loaded it.
 
+Event Manager
+---------------
+To create events in Head-on we call
+
+`headOn.events.add(eventName, callback)`
+
+Now we have our event we can trigger wherever we want in our code with
+
+`headOn.events.trigger(eventName, arg1, arg2 ...)`
+
+The arguments we define in trigger will get passed as arguments to the callback function we defined with `headOn.events.add()`
+
+Grouping
+---------
+You can group elements in head-on with 
+
+`headOn.group(groupName, element)`
+
+If a group with that name does not exist it will create one and add the element. If it does exist it will add the element to the end of the group. 
+
+`headOn.group()` always returns an array of the members of the group with the given group name. So to access a group after we have made it we can call.
+
+`headOn.group(groupName)`
 
 
+Helper Functions
+----------------
+`headOn.randInt(min,max)` returns a random number between the min and max (inclusive) given
