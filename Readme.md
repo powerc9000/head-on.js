@@ -12,6 +12,10 @@ With Head-on.js creating a canvas element is easy.
 
 `headOn.canvas(width,height)`
 
+If you want to use an already created canvas element pass it's id as the last paramater and that will be used instead
+
+`headOn.canvas(width, height, canvasId);
+
 Drawing to canvas
 -------------------
 `headOn.drawRect(width, height, x, y [, color])`

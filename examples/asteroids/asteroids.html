@@ -3,6 +3,7 @@
 	<title></title>
 </head>
 <body>
+	<canvas id="canvas"></canvas>
 </body>
 <script src="../../head-on.js"></script>
 <script>
@@ -17,9 +18,9 @@
 	}, false);
 
 	var randInt = function(min, max) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
+		return Math.floor(Math.random() * (max - min)) + min;
 	}
-	headOn.canvas(500,500);
+	headOn.canvas(500,500, "canvas");
 	headOn.canvas.onclick = function(){
 		if(headOn.gameOver){
 			reset();

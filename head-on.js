@@ -11,7 +11,7 @@
                 gameTime: 0,
 
                 randInt: function(min, max) {
-                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                    return Math.floor(Math.random() * (max - min)) + min;
                 },
 
                 events: {
@@ -184,9 +184,9 @@
                     this.gameTime += modifier;
                 },
 
-                canvas: function(width,height,element){
-                    if(element){
-                        this.canvas = element;
+                canvas: function(width,height,elementId){
+                    if(elementId){
+                        this.canvas = document.getElementById(elementId);
                     }
                     else{
                         this.canvas = document.createElement("canvas");
