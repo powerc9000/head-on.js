@@ -205,7 +205,7 @@
                             that.onTick(then);
                         }
                         then = Date.now();
-                    }, 1000/20);
+                    }, 1000/this.fps);
                 }
         };
         
