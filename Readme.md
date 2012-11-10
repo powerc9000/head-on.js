@@ -8,27 +8,27 @@ Use
 Head-on.js is made to make games easier to create it come with several function to facilitate that
 Creating a canvas
 ------------------
-With Head-on.js creating a canvas element is easy.
+Head-on.js supports multiple canvas elements simple call
 
-`headOn.canvas(width,height)`
+`headOn.canvas.create(canvasName, width, height);`
 
-If you want to use an already created canvas element pass it's id as the last paramater and that will be used instead
+To access a canvas element call 
 
-`headOn.canvas(width, height, canvasId);
+`headOn.canvas(canvasName)`
 
 Drawing to canvas
 -------------------
-`headOn.drawRect(width, height, x, y [, color])`
+`headOn.canvas(canvasName).drawRect(width, height, x, y [, color])`
 
-Draws a rectange to the canvas with the specified width, height x, and y and optional color argument can be specified to fill the retange with a color
+Draws a rectange to the canvas specified by `canvasName` with the specified width, height x, and y and optional color argument can be specified to fill the retange with a color
 
-`headOn.drawImage(image, x, y)`
+`headOn.canvas(canvasName).drawImage(image, x, y)`
 
 Draws an image to the canvas at the x and y specified.
 
-`headOn.drawImageRotated(image, rotation, x, y)`
+`headOn.canvas(canvasName).drawImageRotated(image, rotation, x, y)`
 
-Draws an image to the canvas at with the specified roatation in *degerees* at x and y
+Draws an image to the specified canvas at with the specified roatation in *degerees* at x and y
 
 Animating
 ---------

@@ -157,6 +157,9 @@
                     this.imagesLoaded = false;
                     args = [].slice.call(arguments);
                     total = args.length;
+                    if(!total){
+                        this.imagesLoaded = true;
+                    }
                     loaded = 0;
                     args.forEach(function(image){
                         img = new Image();
@@ -184,18 +187,14 @@
                     this.gameTime += modifier;
                 },
 
-                canvas: function(width,height,elementId){
-                    if(elementId){
-                        this.canvas = document.getElementById(elementId);
+                canvas: function(name){
+                    if(this === headOn){
+                        return new this.canvas(name);
                     }
-                    else{
-                        this.canvas = document.createElement("canvas");
-                        document.body.appendChild(this.canvas);
-                    }
-                    this.canvas.width = width;
-                    this.canvas.height = height;
-                    this.ctx = this.canvas.getContext("2d");
+                    this.canvas = this.canvases[name];
+                    return this;
                 },
+
 
                 run: function(){
                     var that = this;
@@ -208,7 +207,74 @@
                     }, 1000/this.fps);
                 }
         };
-        
+        headOn.canvas.create = function(name,width,height){
+            var canvas, ctx;
+            canvas = document.createElement("canvas");
+            canvas.width = width;
+            canvas.height = height;
+            ctx = canvas.getContext("2d");
+            this.prototype.canvases[name] = {
+                canvas: canvas,
+                ctx: ctx
+            };
+        }
+        headOn.canvas.prototype = {
+            canvases: {},
+
+            drawRect: function(width,height,x,y,color){
+                var ctx = this.canvas.ctx;
+                ctx.save();
+                if(color){
+                    ctx.fillStyle = color;
+                }
+                ctx.fillRect(x,y,width,height);
+                ctx.restore();
+                return this;
+            },
+
+            drawImage: function(image,x,y){
+                var ctx = this.canvas.ctx;
+                ctx.drawImage(image,x,y);
+                return this;
+            },
+
+            drawImageRotated: function(image, rotation, x,y){
+                var ctx = this.canvas.ctx;
+                var radians = rotation * Math.PI / 180;
+                ctx.save();
+                ctx.translate(x + (image.width / 2), y + (image.height / 2));
+                ctx.rotate(radians);
+                ctx.drawImage(image, -image.width / 2, -image.height / 2);
+                ctx.restore();
+                return this;
+            },
+
+            drawText: function(textString, x, y, fontStyle, color, alignment){
+                var ctx = this.canvas.ctx;
+                ctx.save();
+
+                if(fontStyle){
+                    ctx.font = fontStyle + " sans-serif";
+                }
+                if(color){
+                    ctx.fillStyle = color;
+                }
+                if(alignment){
+                    ctx.textAlign = alignment;
+                }
+
+                ctx.fillText(textString,x,y);
+
+                ctx.restore();
+                return this;
+            },
+
+            append: function(element){
+                document[element].appendChild(this.canvas.canvas);
+                return this;
+            }
+        }
+
         return headOn;
     }());
     window.headOn = headOn;
