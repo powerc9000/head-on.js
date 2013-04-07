@@ -20,8 +20,13 @@
 	var randInt = function(min, max) {
 		return Math.floor(Math.random() * (max - min)) + min;
 	}
-	headOn.canvas(500,500, "canvas");
-	headOn.canvas.onclick = function(){
+	headOn.canvas.create("main", 500, 500);
+	headOn.canvas("main").append("body");
+	var c = headOn.canvas("main");
+	c.width = 500;
+	c.height = 500;
+	c.canvas.canvas.onclick = function(){
+		console.log("hey")
 		if(headOn.gameOver){
 			reset();
 		}
@@ -32,8 +37,8 @@
 	headOn.stopped = true;
 	var ship = headOn.entity(
 		{
-			x:headOn.canvas.width/2,
-			y:headOn.canvas.height/2,
+			x:250,
+			y:250/2,
 			angle:0,
 			vx:0,
 			vy:0,
@@ -91,8 +96,8 @@
 		));
 		ship = headOn.entity(
 		{
-			x:headOn.canvas.width/2,
-			y:headOn.canvas.height/2,
+			x:250,
+			y:250,
 			angle:0,
 			vx:0,
 			vy:0,
@@ -145,34 +150,34 @@
 			}
 			ship.x += ship.vx;
 			ship.y += ship.vy;
-			if(ship.x > headOn.canvas.width){
+			if(ship.x > c.width){
 				ship.x = 0;
 			}
-			if(ship.y > headOn.canvas.height){
+			if(ship.y > c.height){
 				ship.y = 0;
 			}
 			if(ship.x + ship.width < 0){
-				ship.x = headOn.canvas.width;
+				ship.x = c.width;
 			}
 			if(ship.y + ship.height < 0){
-				ship.y = headOn.canvas.height;
+				ship.y = c.height;
 			}
 
 			headOn.groups.asteroids.forEach(function(asteroid){
 				if(!asteroid.dead){
 					asteroid.x += asteroid.vx;
 					asteroid.y += asteroid.vy;
-					if(asteroid.x > headOn.canvas.width){
+					if(asteroid.x > c.width){
 						asteroid.x = 0;
 					}
-					if(asteroid.y > headOn.canvas.height){
+					if(asteroid.y > c.height){
 						asteroid.y = 0;
 					}
 					if(asteroid.x + asteroid.width < 0){
-						asteroid.x = headOn.canvas.width;
+						asteroid.x = c.width;
 					}
 					if(asteroid.y + asteroid.height < 0){
-						asteroid.y = headOn.canvas.height;
+						asteroid.y = c.height;
 					}
 				}
 				
@@ -187,17 +192,17 @@
 				}
 				bullet.x += bullet.vx;
 				bullet.y += bullet.vy;
-				if(bullet.x > headOn.canvas.width){
+				if(bullet.x > c.width){
 					bullet.x = 0;
 				}
-				if(bullet.y > headOn.canvas.height){
+				if(bullet.y > c.height){
 					bullet.y = 0;
 				}
 				if(bullet.x + bullet.width < 0){
-					bullet.x = headOn.canvas.width;
+					bullet.x = c.width;
 				}
 				if(bullet.y + bullet.height < 0){
-					bullet.y = headOn.canvas.height;
+					bullet.y = c.height;
 				}
 			});
 			headOn.groups.asteroids.forEach(function(asteroid, ai){
@@ -245,30 +250,30 @@
 	headOn.render = function(time){
 		if(headOn.stopped){
 			if(headOn.gameOver){
-				headOn.drawRect(500,500,0,0,"black");
-				headOn.drawText("Game Over! \n Click to play again!", 250, 250, "20px", "white", "center");
+				c.drawRect(500,500,0,0,"black");
+				c.drawText("Game Over! \n Click to play again!", 250, 250, "20px", "white", "center");
 			}
 			else{
-				headOn.drawRect(500,500,0,0,"black");
-				headOn.drawText("Asteroids! \n Click to play!", 250, 250, "20px", "white", "center");
+				c.drawRect(500,500,0,0,"black");
+				c.drawText("Asteroids! \n Click to play!", 250, 250, "20px", "white", "center");
 			}
 			return;
 		}
-		headOn.drawRect(500,500,0,0);
+		c.drawRect(500,500,0,0);
 
 		headOn.groups.bullets.forEach(function(bullet){
-				headOn.drawRect(3,3,bullet.x,bullet.y,"white");
+				c.drawRect(3,3,bullet.x,bullet.y,"white");
 			})
 
-		headOn.drawImageRotated(headOn.images["ship"], ship.angle, ship.x, ship.y);
+		c.drawImageRotated(headOn.images["ship"], ship.angle, ship.x, ship.y);
 		//render asteroids
 		headOn.groups.asteroids.forEach(function(asteroid){
-			headOn.drawImage(headOn.images["asteroid_"+asteroid.size], asteroid.x, asteroid.y)
+			c.drawImage(headOn.images["asteroid_"+asteroid.size], asteroid.x, asteroid.y)
 			});
 		headOn.groups.asteroids.forEach(function(asteroid){
 			if(asteroid.image){
-				console.log(asteroid.image);
-				headOn.drawImage(asteroid.image, asteroid.x, asteroid.y)
+				
+				c.drawImage(asteroid.image, asteroid.x, asteroid.y)
 			}
 			
 		});
