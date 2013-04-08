@@ -51,47 +51,6 @@
                         
                     }
                 },
-
-                drawRect: function(width,height,x,y,color){
-                    this.ctx.save();
-                    if(color){
-                        this.ctx.fillStyle = color;
-                    }
-                    this.ctx.fillRect(x,y,width,height);
-                    this.ctx.restore();
-                },
-
-                drawImage: function(image,x,y){
-                    this.ctx.drawImage(image,x,y);
-                },
-
-                drawImageRotated: function(image, rotation, x,y){
-                    var radians = rotation * Math.PI / 180;
-                    this.ctx.save();
-                    this.ctx.translate(x + (image.width / 2), y + (image.height / 2));
-                    this.ctx.rotate(radians);
-                    this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
-                    this.ctx.restore();
-                },
-
-                drawText: function(textString, x, y, fontStyle, color, alignment){
-                    this.ctx.save();
-
-                    if(fontStyle){
-                        this.ctx.font = fontStyle + " sans-serif";
-                    }
-                    if(color){
-                        this.ctx.fillStyle = color;
-                    }
-                    if(alignment){
-                        this.ctx.textAlign = alignment;
-                    }
-
-                    this.ctx.fillText(textString,x,y);
-
-                    this.ctx.restore();
-                },
-
                 animate: function(object,keyFrames,callback){
                     var that, interval, currentFrame = 0;
                     if(!object.animating){
@@ -242,7 +201,9 @@
             ctx = canvas.getContext("2d");
             this.prototype.canvases[name] = {
                 canvas: canvas,
-                ctx: ctx
+                ctx: ctx,
+                width: canvas.width,
+                height: canvas.height
             };
         }
         headOn.canvas.prototype = {

@@ -18,7 +18,9 @@ To access a canvas element call
 
 Drawing to canvas
 -------------------
-`headOn.canvas(canvasName).drawRect(width, height, x, y [, color])`
+```javascript
+headOn.canvas(canvasName).drawRect(width, height, x, y [, color])
+```
 
 Draws a rectange to the canvas specified by `canvasName` with the specified width, height x, and y and optional color argument can be specified to fill the retange with a color
 
