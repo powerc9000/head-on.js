@@ -23,6 +23,8 @@
 	headOn.canvas.create("main", 500, 500);
 	headOn.canvas("main").append("body");
 	var c = headOn.canvas("main");
+	var snd = new Audio("sound/Laser_Shoot2.ogg");
+	var explo = new Audio("sound/Explosion4.ogg");
 	c.width = 500;
 	c.height = 500;
 	c.canvas.canvas.onclick = function(){
@@ -130,6 +132,7 @@
 			
 			if(keysDown[32]){
 				if(ship.canShoot){
+					snd.play();
 					headOn.group("bullets",headOn.entity(
 				{
 					x: ship.x + ship.width/2,
@@ -239,6 +242,7 @@
 								height: sizeChart[size].height
 							}))
 						}
+						explo.play();
 						headOn.groups.asteroids.splice(ai,1);
 						
 						});
