@@ -19,7 +19,7 @@
         var headOn = {
 
                 groups: {},
-                images: {},
+                _images: {},
                 fps: 50,
                 imagesLoaded: false,
                 gameTime: 0,
@@ -138,10 +138,11 @@
                 },
 
                 loadImages: function(){
-                    var args, img, total, loaded, timeout, interval, that;
+                    var args, img, total, loaded, timeout, interval, that, cb;
                     that = this;
                     this.imagesLoaded = false;
-                    args = [].slice.call(arguments);
+                    args = [].slice.call(arguments, 0, arguments.length - 1);
+                    cb = arguments[arguments.length-1];
                     total = args.length;
                     if(!total){
                         this.imagesLoaded = true;
@@ -154,17 +155,25 @@
                             loaded += 1;
                         };
                     
-                        that.images[image.name] = img;
+                        that._images[image.name] = img;
                     });
                     
                     interval = setInterval(function(){
                         if(total === loaded){
+                        	cb();
                             that.imagesLoaded = true;
                             clearInterval(interval);
                         }
                     }, 100);
                 },
-
+                images: function(image){
+                	if(this._images[image]){
+                		return this._images[image];
+                	}
+                	else{
+                		return new Image();
+                	}
+                },
                 onTick: function(then){
                     var now = Date.now(),
                     modifier = now - then;
