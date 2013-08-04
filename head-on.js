@@ -1,15 +1,15 @@
-        __  __               __                      _     
-       / / / /__  ____ _____/ /     ____  ____      (_)____
-      / /_/ / _ \/ __ `/ __  /_____/ __ \/ __ \    / / ___/
-     / __  /  __/ /_/ / /_/ /_____/ /_/ / / / /   / (__  ) 
-    /_/ /_/\___/\__,_/\__,_/      \____/_/ /_(_)_/ /____/  
-                                              /___/        
-       __  __              _                                  _       __     ___ __                             ____                   _          
-      / /_/ /_  ___       (_)___ __   ______ ________________(_)___  / /_   / (_) /_  _________ ________  __   / __/___  _____   _____(_)_________
-     / __/ __ \/ _ \     / / __ `/ | / / __ `/ ___/ ___/ ___/ / __ \/ __/  / / / __ \/ ___/ __ `/ ___/ / / /  / /_/ __ \/ ___/  / ___/ / ___/ ___/
-    / /_/ / / /  __/    / / /_/ /| |/ / /_/ (__  ) /__/ /  / / /_/ / /_   / / / /_/ / /  / /_/ / /  / /_/ /  / __/ /_/ / /     (__  ) / /  (__  ) 
-    \__/_/ /_/\___/  __/ /\__,_/ |___/\__,_/____/\___/_/  /_/ .___/\__/  /_/_/_.___/_/   \__,_/_/   \__, /  /_/  \____/_/     /____/_/_/  /____/  
-                    /___/                                  /_/                                     /____/                                         
+//     __  __               __                      _     
+//    / / / /__  ____ _____/ /     ____  ____      (_)____
+//   / /_/ / _ \/ __ `/ __  /_____/ __ \/ __ \    / / ___/
+//  / __  /  __/ /_/ / /_/ /_____/ /_/ / / / /   / (__  ) 
+// /_/ /_/\___/\__,_/\__,_/      \____/_/ /_(_)_/ /____/  
+//                                           /___/        
+//    __  __              _                                  _       __     ___ __                             ____                   _          
+//   / /_/ /_  ___       (_)___ __   ______ ________________(_)___  / /_   / (_) /_  _________ ________  __   / __/___  _____   _____(_)_________
+//  / __/ __ \/ _ \     / / __ `/ | / / __ `/ ___/ ___/ ___/ / __ \/ __/  / / / __ \/ ___/ __ `/ ___/ / / /  / /_/ __ \/ ___/  / ___/ / ___/ ___/
+// / /_/ / / /  __/    / / /_/ /| |/ / /_/ (__  ) /__/ /  / / /_/ / /_   / / / /_/ / /  / /_/ / /  / /_/ /  / __/ /_/ / /     (__  ) / /  (__  ) 
+// \__/_/ /_/\___/  __/ /\__,_/ |___/\__,_/____/\___/_/  /_/ .___/\__/  /_/_/_.___/_/   \__,_/_/   \__, /  /_/  \____/_/     /____/_/_/  /____/  
+//                 /___/                                  /_/                                     /____/                                         
 
 
                     
@@ -30,55 +30,27 @@
 
                 events: {
                     events: {},
-                    add: function(eventName, callback){
-                        this.events[eventName] = callback;
+                    listen: function(eventName, callback){
+                        if(!this.events[eventName]){
+                            this.events[eventName] = [];
+                        }
+                        this.events[eventName].push(callback);
                     },
+                    
                     trigger: function(eventName){
-                        var args = [].splice.call(arguments, 1)
-                        this.events[eventName].apply(null,args);
+                        var args = [].splice.call(arguments, 1),
+                            e = this.events[eventName],
+                            l,
+                            i;
+                        if(e){
+                            l = e.length;
+                            for(i = 0; i < l; i++){
+                                e[i].call(headOn, args);
+                            }
+                        }
+                        
                     }
                 },
-
-                drawRect: function(width,height,x,y,color){
-                    this.ctx.save();
-                    if(color){
-                        this.ctx.fillStyle = color;
-                    }
-                    this.ctx.fillRect(x,y,width,height);
-                    this.ctx.restore();
-                },
-
-                drawImage: function(image,x,y){
-                    this.ctx.drawImage(image,x,y);
-                },
-
-                drawImageRotated: function(image, rotation, x,y){
-                    var radians = rotation * Math.PI / 180;
-                    this.ctx.save();
-                    this.ctx.translate(x + (image.width / 2), y + (image.height / 2));
-                    this.ctx.rotate(radians);
-                    this.ctx.drawImage(image, -image.width / 2, -image.height / 2);
-                    this.ctx.restore();
-                },
-
-                drawText: function(textString, x, y, fontStyle, color, alignment){
-                    this.ctx.save();
-
-                    if(fontStyle){
-                        this.ctx.font = fontStyle + " sans-serif";
-                    }
-                    if(color){
-                        this.ctx.fillStyle = color;
-                    }
-                    if(alignment){
-                        this.ctx.textAlign = alignment;
-                    }
-
-                    this.ctx.fillText(textString,x,y);
-
-                    this.ctx.restore();
-                },
-
                 animate: function(object,keyFrames,callback){
                     var that, interval, currentFrame = 0;
                     if(!object.animating){
@@ -229,23 +201,49 @@
             ctx = canvas.getContext("2d");
             this.prototype.canvases[name] = {
                 canvas: canvas,
-                ctx: ctx
+                ctx: ctx,
+                width: canvas.width,
+                height: canvas.height
             };
         }
         headOn.canvas.prototype = {
             canvases: {},
-
-            drawRect: function(width,height,x,y,color){
+            stroke: function(stroke){
+            	var ctx = this.canvas.ctx;
+            	ctx.save();
+            	if(stroke){
+            		ctx.lineWith = stroke.width;
+            		ctx.strokeStyle = stroke.color;
+            		ctx.stroke();
+            	}
+            	ctx.restore();
+            },
+            drawRect: function(width,height,x,y,color, stroke){
                 var ctx = this.canvas.ctx;
                 ctx.save();
+                ctx.beginPath();
                 if(color){
                     ctx.fillStyle = color;
                 }
-                ctx.fillRect(x,y,width,height);
+                ctx.rect(x,y,width,height);
+                ctx.fill();
+                this.stroke(stroke)
+                ctx.closePath();
                 ctx.restore();
                 return this;
             },
-
+            drawCircle: function(x, y, radius, color, stroke){
+            	var ctx = this.canvas.ctx;
+            	ctx.save();
+            	ctx.beginPath();
+            	ctx.arc(x, y, radius, 0, 2*Math.PI, false);
+            	ctx.fillStyle = color || "black";
+            	ctx.fill();
+            	this.stroke(stroke);
+            	ctx.restore();
+            	ctx.closePath();
+            	return this;
+            },
             drawImage: function(image,x,y){
                 var ctx = this.canvas.ctx;
                 ctx.drawImage(image,x,y);
