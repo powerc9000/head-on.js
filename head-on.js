@@ -137,34 +137,30 @@
                     return this.groups[groupName];
                 },
 
-                loadImages: function(){
-                    var args, img, total, loaded, timeout, interval, that, cb;
+                loadImages: function(imageArray, imgCallback, allCallback){
+                    var args, img, total, loaded, timeout, interval, that, cb, imgOnload;
                     that = this;
                     this.imagesLoaded = false;
-                    args = [].slice.call(arguments, 0, arguments.length - 1);
-                    cb = arguments[arguments.length-1];
-                    total = args.length;
+                    total = imageArray.length;
                     if(!total){
                         this.imagesLoaded = true;
                     }
                     loaded = 0;
-                    args.forEach(function(image){
+                    imgOnload = function(){
+                    	loaded += 1;
+                    	imgCallback && imgCallback(image.name);
+                    	if(loaded === total){
+                    		allCallback && allCallBack;
+                    		that.imagesLoaded = true;
+                    	}
+                    }
+                    imageArray.forEach(function(image){
                         img = new Image();
                         img.src = image.src;
-                        img.onload = function(){
-                            loaded += 1;
-                        };
+                        img.onload = imgOnload
                     
                         that._images[image.name] = img;
                     });
-                    
-                    interval = setInterval(function(){
-                        if(total === loaded){
-                        	cb();
-                            that.imagesLoaded = true;
-                            clearInterval(interval);
-                        }
-                    }, 100);
                 },
                 images: function(image){
                 	if(this._images[image]){
