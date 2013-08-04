@@ -78,11 +78,15 @@ The fps of Head-on.js can be changed via the `headOn.fps` variable
 
 Image loading
 --------------
-Loading multiple images in head-on.js is simple via the `headOn.loadImages(image1,image2 ...)` function
+Loading multiple images in head-on.js is simple via the `headOn.loadImages(imageArray, imageCallback, allCallback)` function
 
-Head-on expects and image argument to an argument formated as `{name:"",src:""}` name being the name we want to give the image and src being the location of the image.
+`imageArray` is an array of objects formated as `{name:"",src:""}` name being the name we want to give the image and src being the location of the image.
 
-The images you load via Head-on are accesible from the headOn.images variable to get the image we want we simply do `headOn.images["image name"]` where image name is the name we gave the image when we loaded it.
+`imageCallback` is called for each image that loads passing the image name as an argument.
+
+`allCallback` is called when all images have finished loading.
+
+The images you load via Head-on are accesible from the headOn.images method to get the image we want we simply do `headOn.images("image name")` where image name is the name we gave the image when we loaded it.
 
 Event Manager
 ---------------
