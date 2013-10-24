@@ -1,6 +1,6 @@
 Head-on.js
 ===========
-The javascript game engine for Sirs
+The javascript game engine for velociraptors
 
 Use
 =========
