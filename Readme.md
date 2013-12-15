@@ -32,6 +32,17 @@ Draws an image to the canvas at the x and y specified.
 
 Draws an image to the specified canvas at with the specified roatation in *degerees* at x and y
 
+Vectors
+---------
+Head-on provides a vector method `headOn.Vector(x,y)` returns a vector with the following methods availible.
+All methods return a new `Vector` leaving the old one unchanged.
+`Vector.mul(scalar)` Multiplies a vector by a scalar returns a vector.
+`Vector.normalize()` normalizes a vector.
+`Vector.length()` returns the length of the vector as a floating point number.
+`Vector.dot(vector2)` returns the dot product of two vectors as a floating point number.
+`Vector.add(vector2)` returns a new vector of the addition of two vectors.
+`Vector.sub(vector2)` returns a new vector of the first vector subtracted by vector2 eg `(vec1.x - vec2.x), (vec1.y - vec2.y)`
+
 Animating
 ---------
 
@@ -56,9 +67,12 @@ this will create an object with attributes supplied by the values argument that 
 Collision Detection
 -------------------
 
-Currently Head-on.js features simple AABB collision detection to test for collisions between objects reutrn true if the objects are colliding
+Head-on uses SAT collision detection but it assumes rectangles.
 
 `headOn.collides(object1,object2)`
+
+`object1` and `object2` must have an angle and position property set. Angle must be the rotation of the object in radians and position must be
+a `headOn.Vector`
 
 Looping
 -----------------------
