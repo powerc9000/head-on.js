@@ -36,11 +36,17 @@ Vectors
 ---------
 Head-on provides a vector method `headOn.Vector(x,y)` returns a vector with the following methods availible.
 All methods return a new `Vector` leaving the old one unchanged.
+
 `Vector.mul(scalar)` Multiplies a vector by a scalar returns a vector.
+
 `Vector.normalize()` normalizes a vector.
+
 `Vector.length()` returns the length of the vector as a floating point number.
+
 `Vector.dot(vector2)` returns the dot product of two vectors as a floating point number.
+
 `Vector.add(vector2)` returns a new vector of the addition of two vectors.
+
 `Vector.sub(vector2)` returns a new vector of the first vector subtracted by vector2 eg `(vec1.x - vec2.x), (vec1.y - vec2.y)`
 
 Animating
