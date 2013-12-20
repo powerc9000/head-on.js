@@ -416,11 +416,21 @@
 						window.requestAnimationFrame(aniframe);
 					}
 					
+				},
+				exception: function(message){
+					this.message = message;
+					this.name = "Head-on Exception";
+					this.toString = function(){
+						return this.name + ": " + this.message
+					}
 				}
 		};
 
 		headOn.canvas.create = function(name, width, height, camera){
 			var canvas, ctx;
+			if(!camera || !(camera instanceof headOn.Camera)){
+				throw new headOn.exception("Canvas must be intialized with a camera");
+			}
 			canvas = document.createElement("canvas");
 			canvas.width = width;
 			canvas.height = height;

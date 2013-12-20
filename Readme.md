@@ -6,11 +6,32 @@ Use
 =========
 
 Head-on.js is made to make games easier to create it come with several function to facilitate that
+
+Createing a camera
+-------------------
+Head-on.js now supports a camera. To create a camera do.
+
+`var camera = new headOn.camera(width, height [, x, y])`
+
+The camera has a couple of methods right now more to come;
+
+`camera.zoomIn(amt)` amount you want the camera to zoom in e.g. `camera.zoomIn(2)` zooms the camera in 2x.
+
+`camera.zoomOut(amt)` amount you want the camera to zoom out e.g. `camera.zoomOut(2)` zooms the camera out 2x.
+
+`camera.move(vector)` a `headOn.Vector` of how may units x and y you want the camera to move e.g. `camera.move(headOn.Vector(2,2))` would move the camera two units in the y and in the x
+
+`camera.moveTo(vector)` a `headOn.Vector` of where you want the camera to move to. e.g. `camera.move(headOn.Vector(500,500))` would move the camera to (500,500)
+
+
+
 Creating a canvas
 ------------------
-Head-on.js supports multiple canvas elements simple call
+Head-on.js supports multiple canvas elements simple call 
 
-`headOn.canvas.create(canvasName, width, height);`
+`headOn.canvas.create(canvasName, width, height, camera);`
+
+Passing in a name width, height and camera object.
 
 To access a canvas element call 
 
@@ -73,12 +94,16 @@ this will create an object with attributes supplied by the values argument that 
 Collision Detection
 -------------------
 
-Head-on uses SAT collision detection but it assumes rectangles.
+Head-on uses SAT collision detection can do circle circle collision, rectangle rectangle collision and circle rectangle collision.
+
 
 `headOn.collides(object1,object2)`
 
-`object1` and `object2` must have an angle and position property set. Angle must be the rotation of the object in radians and position must be
-a `headOn.Vector`
+Rectangles must have an angle and position property set.
+
+Circles must have a radius, position and type property set. The type property must be set to the string `"circle"`
+
+The position property must be an instance of `headOn.Vector`
 
 Looping
 -----------------------
