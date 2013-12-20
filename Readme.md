@@ -111,13 +111,13 @@ The event loop in Head-on.js can be started with `headOn.run()` it should be not
  
 Every tick Head-on.js run the functions `headOn.update(time)` and `headOn.render(time)` time being the amount of time (in miliseconds) since the last tick. Adding our code to the render and update functions is easy
 
-`headOn.update = function(time){
-	do what you need to here
-}`
+`headOn.update(function(time){
+	\\do what you need to here
+})`
 
-`headOn.render = function(time){
-	Do what you need to here
-}`
+`headOn.render(function(time){
+	\\Do what you need to here
+})`
 
 The fps of Head-on.js can be changed via the `headOn.fps` variable
 
