@@ -1,10 +1,9 @@
-//	__  __			  __					 _	
-//	/ / / /__  ____ _____/ /	____  ____	 (_)____
-//   / /_/ / _ \/ __ `/ __  /_____/ __ \/ __ \	/ / ___/
+//	   __  __			    __					 _	
+//	  / / / /__  ____ _____/ /	____  ____	       (_)____
+//   / /_/ / _ \/ __ `/ __  /_____/ __ \/ __ \	  / / ___/
 //  / __  /  __/ /_/ / /_/ /_____/ /_/ / / / /   / (__  ) 
-// /_/ /_/\___/\__,_/\__,_/	 \____/_/ /_(_)_/ /____/  
-//										  /___/		
-					
+// /_/ /_/\___/\__,_/\__,_/	     \____/_/ /_(_)_/ /____/  
+//										     /___/		
 (function(window, undefined){
 	"use strict";
 	var headOn = (function(){
@@ -48,6 +47,17 @@
 						}
 						
 					}
+				},
+				Camera: function(width, height, x, y, zoom){
+					this.width = width;
+					this.height = height;
+					x = x || 0;
+					y = y || 0;
+					this.position = headOn.Vector(x, y);
+					this.dimensions = headOn.Vector(width, height);
+					this.center = headOn.Vector(x+width/2, y+height/2);
+					this.zoomAmt = zoom || 1;
+					return this;
 				},
 				animate: function(object,keyFrames,callback){
 					var that, interval, currentFrame = 0;
@@ -93,7 +103,6 @@
 					}
 					return o;
 				},
-
 				collides: function(poly1, poly2) {
 					var points1 = this.getPoints(poly1),
 						points2 = this.getPoints(poly2),
@@ -114,6 +123,15 @@
 						dot,
 						nextPoint,
 						currentPoint;
+						
+					if(poly1.type === "circle" && poly2.type ==="circle"){
+						return circleCircle(poly1, poly2);
+					}else if(poly1.type === "circle"){
+						return circleRect(poly1, poly2);
+					}else if(poly2.type === "circle"){
+						return circleRect(poly2, poly1);
+					}
+					
 
 					//loop through the edges of Polygon 1
 					for (; i < l; i++) {
@@ -234,10 +252,37 @@
 						overlap: MTV2,
 						normal: MN
 					};
+					function circleRect(circle, rect){
+						var newX = circle.position.x * Math.cos(-rect.angle);
+						var newY = circle.position.y * Math.sin(-rect.angle);
+						var circleDistance = {x:newX, y:newY};
+						var cornerDistance_sq;
+						circleDistance.x = Math.abs(circle.position.x - rect.position.x);
+					    circleDistance.y = Math.abs(circle.position.y - rect.position.y);
 
+					    if (circleDistance.x > (rect.width/2 + circle.radius)) { return false; }
+					    if (circleDistance.y > (rect.height/2 + circle.radius)) { return false; }
+
+					    if (circleDistance.x <= (rect.width/2)) { return true; } 
+					    if (circleDistance.y <= (rect.height/2)) { return true; }
+
+					    cornerDistance_sq = Math.pow(circleDistance.x - rect.width/2,2) +
+					                         Math.pow(circleDistance.y - rect.height/2, 2);
+
+					    return (cornerDistance_sq <= Math.pow(circle.radius,2));
+					}
+					function pointInCircle(point, circle){
+						Math.pow(point.x - circle.position.x ,2) + Math.pow(point.y - circle.position.y, 2) < Math.pow(circle.radius,2);
+					}
+					function circleCircle(ob1, ob2){
+						square(ob2.position.x - ob1.position.x) + square(ob2.position.y - ob1.position.y) <= square(ob1.radius + ob2.radius)
+					}
 				},
 
 				getPoints: function (obj){
+					if(obj.type === "circle"){
+						return [];
+					}
 					var x = obj.position.x,
 						y = obj.position.y,
 						width = obj.width,
@@ -374,7 +419,7 @@
 				}
 		};
 
-		headOn.canvas.create = function(name,width,height){
+		headOn.canvas.create = function(name, width, height, camera){
 			var canvas, ctx;
 			canvas = document.createElement("canvas");
 			canvas.width = width;
@@ -384,7 +429,8 @@
 				canvas: canvas,
 				ctx: ctx,
 				width: canvas.width,
-				height: canvas.height
+				height: canvas.height,
+				camera: camera
 			};
 		}
 		headOn.canvas.prototype = {
@@ -400,19 +446,18 @@
 				ctx.restore();
 			},
 			drawRect: function(width, height, x, y, color, stroke, rotation){
-				var ctx = this.canvas.ctx, mod = 1;
+				var ctx = this.canvas.ctx, mod = 1, camera = this.canvas.camera;
 				ctx.save();
 				ctx.beginPath();
 
 				if(rotation){
 					ctx.translate(x,y);
 					ctx.rotate(rotation);
-					ctx.rect(0, 0, width,height);
-					
-					
+					ctx.rect(0, 0, width, height);
 				}
 				else{
-					ctx.rect(x,y,width,height);
+					//console.log(camera.position.x)
+					ctx.rect((x - camera.position.x)/camera.zoomAmt , (y - camera.position.y)/camera.zoomAmt , width / camera.zoomAmt, height / camera.zoomAmt);
 				}
 				if(color){
 					ctx.fillStyle = color;
@@ -427,10 +472,10 @@
 				return this;
 			},
 			drawCircle: function(x, y, radius, color, stroke){
-				var ctx = this.canvas.ctx;
+				var ctx = this.canvas.ctx, camera = this.canvas.camera;
 				ctx.save();
 				ctx.beginPath();
-				ctx.arc(x, y, radius, 0, 2*Math.PI, false);
+				ctx.arc((x - camera.position.x)/camera.zoomAmt, (y - camera.position.y)/camera.zoomAmt, radius / camera.zoomAmt, 0, 2*Math.PI, false);
 				ctx.fillStyle = color || "black";
 				ctx.fill();
 				this.stroke(stroke);
@@ -492,6 +537,35 @@
 					document.body.appendChild(this.canvas.canvas);
 				}
 				return this;
+			},
+			clear: function(){
+				var ctx = this.canvas.ctx;
+				ctx.clearRect(0,0, this.canvas.width, this.canvas.height)
+			},
+			setCamera: function(cam){
+				this.canvas.camera = cam;
+			}
+		}
+		headOn.Camera.prototype = {
+			zoomIn: function(amt){
+				this.zoomAmt /= amt;
+				this.position = this.center.sub(this.dimensions.mul(this.zoomAmt / 2))
+				return this;
+			},
+			zoomOut: function(amt){
+				this.zoomAmt *= amt;
+				this.position = this.center.sub(this.dimensions.mul(this.zoomAmt / 2));
+				
+				return this;
+			},
+			move: function(vec){
+				this.position = this.position.add(vec);
+				this.center = this.position.add(headOn.Vector(this.width, this.height).mul(.5));
+				return this;
+			},
+			moveTo: function(vec){
+				this.position = vec.sub(this.dimensions.mul(.5).mul(this.zoomAmt));
+				this.center = vec;
 			}
 		}
 		vectorProto = {
@@ -526,11 +600,19 @@
 				return headOn.Vector(this.x * scalar, this.y * scalar);
 			}
 		}
-
+		function sign(num){
+			if(num < 0){
+				return -1;
+			}else{
+				return 1;
+			}
+		}
 		
 
 		return headOn;
-
+		function square(num){
+			return num * num;
+		}
 		function isEmpty(obj){
 			return Object.keys(obj).length === 0;
 		}
