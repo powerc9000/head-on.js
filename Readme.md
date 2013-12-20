@@ -7,7 +7,7 @@ Use
 
 Head-on.js is made to make games easier to create it come with several function to facilitate that
 
-Createing a camera
+Creating a camera
 -------------------
 Head-on.js now supports a camera. To create a camera do.
 
