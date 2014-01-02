@@ -571,6 +571,9 @@
 					},
 					reset: function(){
 						jiff.remaining = jiff.TTL;
+					},
+					timeLeft: function(){
+						return jiff.remaining;
 					}
 				}
 			},
