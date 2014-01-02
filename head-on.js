@@ -306,7 +306,9 @@
 
 				},
 
-				
+				Timer: function(){
+					this.jobs = [];
+				},
 				pause: function(){
 					this.paused = true;
 					this.events.trigger("pause");
@@ -554,6 +556,28 @@
 			},
 			setCamera: function(cam){
 				this.canvas.camera = cam;
+			}
+		}
+		headOn.Timer.prototype = {
+			job: function(time){
+				var jiff = {
+					TTL: time,
+					remaining: time
+				};
+				this.jobs.push(jiff);
+				return {
+					ready: function(){
+						return jiff.remaining <= 0;
+					},
+					reset: function(){
+						jiff.remaining = jiff.TTL;
+					}
+				}
+			},
+			update: function(time){
+				this.jobs.forEach(function(j){
+					j.remaining -= time;
+				});
 			}
 		}
 		headOn.Camera.prototype = {
