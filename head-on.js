@@ -559,10 +559,10 @@
 			}
 		}
 		headOn.Timer.prototype = {
-			job: function(time){
+			job: function(time, start){
 				var jiff = {
 					TTL: time,
-					remaining: time
+					remaining: start || time
 				};
 				this.jobs.push(jiff);
 				return {
