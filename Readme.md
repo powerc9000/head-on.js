@@ -2,6 +2,8 @@ Head-on.js
 ===========
 The javascript game engine for velociraptors
 
+![Raptor](raptor.jpg)
+
 Use
 =========
 
