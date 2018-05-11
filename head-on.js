@@ -856,7 +856,7 @@
 				}
 			},
 			moveTo: function(vec){
-				var temp = $h.Vector(0,0);
+				var temp = headOn.Vector(0,0);
 
 				vec.sub(this.dimensions.mul(0.5).mul(this.zoomAmt), temp);
 				if(temp.x === this.position.x && temp.y === this.position.y) return;
