@@ -980,6 +980,9 @@
 			return Object.keys(obj).length === 0;
 		}
 	}());
-	module.exports = headOn;
+	if(module){
+		
+		module.exports = headOn;
+	}
 	window.headOn = headOn;
 })(window);
