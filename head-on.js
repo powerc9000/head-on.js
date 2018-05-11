@@ -980,7 +980,7 @@
 			return Object.keys(obj).length === 0;
 		}
 	}());
-	if(module){
+	if(typeof module !== "undefined"){
 		
 		module.exports = headOn;
 	}
